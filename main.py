@@ -11,13 +11,13 @@ from selenium.webdriver.common.action_chains import ActionChains
 from bs4 import BeautifulSoup
 import pandas as pd
 import datetime
-
+import json
 site = 'https://www.terabyteshop.com.br/'
-termo_pesquisa = 'Memoria RAM 8gb'
-# termo_pesquisa = 'Placa de vídeo'
+# termo_pesquisa = 'Memoria RAM 8gb'
+termo_pesquisa = 'Placa de vídeo'
 
 n_pgs = 1  # Número de páginas a serem lidas
-
+n_produt = 1
 # Configurando o webdriver e inserindo o termo de busca (Memória RAM 8gb)
 # firefox_profile = webdriver.FirefoxProfile()
 # firefox_profile.set_preference("browser.privatebrowsing.autostart", True)
@@ -40,8 +40,6 @@ p = 1
 # while True:
 #     try:
 print(f"Lendo página {p}...")
-
-            # Inicia a extração das informações
 html = nav.find_element_by_id("prodarea")
 
 html = html.get_attribute("innerHTML")
@@ -51,39 +49,41 @@ sopa = BeautifulSoup(html, 'lxml')
 for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   url = i.find('a', {'class': 'prod-name'}).attrs['href']
   nav.get(url)
-  #time.sleep(1)
-
   try:
     preco = nav.find_element_by_id('valVista')
   except NoSuchElementException:
     alternativePreco = nav.find_element_by_class_name('p3')
     preco = alternativePreco.find_element_by_tag_name('span')
     pass
-  #time.sleep(2)
-  #element = nav.find_element_by_class_name('panel-group')
-  #Actions actions = new Actions(nav)
-
-  button = WebDriverWait(nav, 10).until(ec.visibility_of_element_located((By.ID,'btnCloseCookie'))).click()
+  try:
+    button = WebDriverWait(nav, 10).until(ec.visibility_of_element_located((By.ID,'btnCloseCookie'))).click()
+  except NoSuchElementException:
+    pass
   time.sleep(1)
   element = nav.find_elements_by_class_name('panel-group')
-  element[1].click()
+  element[2].click()
   time.sleep(1)
-  #ActionChains(nav).move_to_element(menu).click(hidden_submenu).perform()
-  # WebDriverWait(nav, 10).until(ec.visibility_of_element_located((By.CLASS_NAME,'panel-group'))).click()
-  # body = nav.find_element_by_class_name("container")
-  # sopaHtml = body.get_attribute("innerHTML")
-  # sopaFinal = BeautifulSoup(sopaHtml, 'lxml')
 
   tecnica = nav.find_element_by_class_name('tecnicas')
   esptecnica = tecnica.find_elements_by_tag_name('p')
-  print(len(esptecnica))
+  print('tenicas',len(esptecnica))
   for f in esptecnica:
-    try:
-      desc = f.find_element_by_tag_name('strong')
-      espec = f.find_element_by_tag_name('p')
-      print(desc.text + " : "+espec.text + "\n")
-    except NoSuchElementException:
-      pass
+    # print(f.text)
+    split = f.text.split(':')
+    print(split[0].strip(),split[1].strip())
+    #if split is not None:
+     #if split[1] is not None:
+      #print(split[0],split[1],index)
+  if p == n_produt:
+    print("Extração concluída.")
+    break
+  p += 1
+  #   x = {"name":"teste"}
+  #  // print(x['name'])
+      # elif f.find_element_by_tag_name('p') is not None:
+      #   item = f.find_element_by_tag_name('p')
+      #   print(desc.text + " : " + item  + "\n")
+
 
     #print('esp',item.find('strong').text)
-nav.close()
+# nav.close()
