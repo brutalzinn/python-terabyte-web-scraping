@@ -9,15 +9,35 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from bs4 import BeautifulSoup
-import pandas as pd
 import datetime
+from random import randint
 import json
+from pymongo import MongoClient
+from pprint import pprint
 site = 'https://www.terabyteshop.com.br/'
 # termo_pesquisa = 'Memoria RAM 8gb'
 termo_pesquisa = 'Placa de vídeo'
+client = MongoClient('mongodb://127.0.0.1:27017/python')
+db=client.python
+# names = ['Kitchen','Animal','State', 'Tastey', 'Big','City','Fish', 'Pizza','Goat', 'Salty','Sandwich','Lazy', 'Fun']
+# company_type = ['LLC','Inc','Company','Corporation']
+# company_cuisine = ['Pizza', 'Bar Food', 'Fast Food', 'Italian', 'Mexican', 'American', 'Sushi Bar', 'Vegetarian']
 
+# for x in range(1, 10):
+#     business = {
+#         'name' : names[randint(0, (len(names)-1))] + ' ' + names[randint(0, (len(names)-1))]  + ' ' + company_type[randint(0, (len(company_type)-1))],
+#         'rating' : randint(1, 5),
+#         'cuisine' : company_cuisine[randint(0, (len(company_cuisine)-1))]
+#     }
+#     #Step 3: Insert business object directly into MongoDB via isnert_one
+#     result=db.produtos.insert_one(business)
+#     #Step 4: Print to the console the ObjectID of the new document
+#     print('Created {0} of 500 as {1}'.format(x,result.inserted_id))
+
+
+# exit()
 n_pgs = 1  # Número de páginas a serem lidas
-n_produt = 1
+n_produt = 3
 # Configurando o webdriver e inserindo o termo de busca (Memória RAM 8gb)
 # firefox_profile = webdriver.FirefoxProfile()
 # firefox_profile.set_preference("browser.privatebrowsing.autostart", True)
@@ -55,10 +75,11 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
     alternativePreco = nav.find_element_by_class_name('p3')
     preco = alternativePreco.find_element_by_tag_name('span')
     pass
-  try:
-    button = WebDriverWait(nav, 10).until(ec.visibility_of_element_located((By.ID,'btnCloseCookie'))).click()
-  except NoSuchElementException:
-    pass
+  if p == 1:
+    try:
+      button = WebDriverWait(nav, 10).until(ec.visibility_of_element_located((By.ID,'btnCloseCookie'))).click()
+    except NoSuchElementException:
+      pass
   time.sleep(1)
   element = nav.find_elements_by_class_name('panel-group')
   element[2].click()
@@ -67,13 +88,13 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   tecnica = nav.find_element_by_class_name('tecnicas')
   esptecnica = tecnica.find_elements_by_tag_name('p')
   print('tenicas',len(esptecnica))
+  obj = {}
   for f in esptecnica:
-    # print(f.text)
     split = f.text.split(':')
-    print(split[0].strip(),split[1].strip())
-    #if split is not None:
-     #if split[1] is not None:
-      #print(split[0],split[1],index)
+    nome = split[0].replace('\r', '').replace('\n', '')
+    value = split[1].replace('\r', '').replace('\n', '')
+    obj[nome] = value
+  db.produtos.insert_one(obj)
   if p == n_produt:
     print("Extração concluída.")
     break
