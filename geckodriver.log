@@ -2693,3 +2693,9 @@ console.warn: SearchSettings: "get: No settings file exists, new profile?" (new 
 
 ###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
+1624157014727	geckodriver	INFO	Listening on 127.0.0.1:44979
+1624157014729	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileyhhJR5"
+1624157015033	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileyhhJR5/search.json.mozlz4", (void 0)))
+1624157015979	Marionette	INFO	Listening on port 40275
+1624157016041	Marionette	WARN	TLS certificate errors will be ignored for this session

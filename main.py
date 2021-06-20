@@ -37,7 +37,7 @@ db=client.python
 
 # exit()
 n_pgs = 1  # Número de páginas a serem lidas
-n_produt = 3
+n_produt = 5
 # Configurando o webdriver e inserindo o termo de busca (Memória RAM 8gb)
 # firefox_profile = webdriver.FirefoxProfile()
 # firefox_profile.set_preference("browser.privatebrowsing.autostart", True)
