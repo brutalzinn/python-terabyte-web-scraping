@@ -13,6 +13,8 @@ import datetime
 from random import randint
 import json
 from pymongo import MongoClient
+import re
+
 from pprint import pprint
 site = 'https://www.terabyteshop.com.br/'
 # termo_pesquisa = 'Memoria RAM 8gb'
@@ -37,7 +39,7 @@ db=client.python
 
 # exit()
 n_pgs = 1  # Número de páginas a serem lidas
-n_produt = 5
+n_produt = 6
 # Configurando o webdriver e inserindo o termo de busca (Memória RAM 8gb)
 # firefox_profile = webdriver.FirefoxProfile()
 # firefox_profile.set_preference("browser.privatebrowsing.autostart", True)
@@ -69,6 +71,7 @@ sopa = BeautifulSoup(html, 'lxml')
 for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   url = i.find('a', {'class': 'prod-name'}).attrs['href']
   nav.get(url)
+  preco = 0
   try:
     preco = nav.find_element_by_id('valVista')
   except NoSuchElementException:
@@ -84,11 +87,14 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   element = nav.find_elements_by_class_name('panel-group')
   element[2].click()
   time.sleep(1)
-
+  title = nav.find_element_by_class_name('tit-prod')
   tecnica = nav.find_element_by_class_name('tecnicas')
   esptecnica = tecnica.find_elements_by_tag_name('p')
-  print('tenicas',len(esptecnica))
   obj = {}
+  obj['nome'] = title.text
+  a_string = preco.text
+  a_string = a_string.replace(',',".")
+  obj['preco'] = float(re.findall("\d+\.\d+", a_string)[0])
   for f in esptecnica:
     split = f.text.split(':')
     nome = split[0].replace('\r', '').replace('\n', '')
