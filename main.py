@@ -111,7 +111,7 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
     'estabelecimento':ObjectId(estabelecimento),
     'rank': 1,
     'descricao':tecnica.text,
-    'categorias':ObjectId(['60c8d06c8089d00569cde3d7'])
+    'categorias':[ObjectId('60c8d06c8089d00569cde3d7')]
   }
   db.produtoCollection.insert_one(finalObj)
   if p == n_produt:
