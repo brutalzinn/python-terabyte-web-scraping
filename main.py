@@ -95,8 +95,8 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   obj = {}
   obj['nome'] = title.text
   a_string = preco.text
-  a_string = a_string.replace(',',".")
-  obj['preco'] = float(re.findall("\d+\.\d+", a_string)[0])
+  a_string = a_string.replace(',',"")
+  obj['preco'] = int(re.search(r'\d+', a_string).group())
   for f in esptecnica:
     split = f.text.split(':')
     nome = split[0].replace('\r', '').replace('\n', '').lower()
