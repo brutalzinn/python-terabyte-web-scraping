@@ -14,13 +14,15 @@ from random import randint
 import json
 from pymongo import MongoClient
 import re
-
+from bson import ObjectId
 from pprint import pprint
 site = 'https://www.terabyteshop.com.br/'
 # termo_pesquisa = 'Memoria RAM 8gb'
 termo_pesquisa = 'Placa de vídeo'
-client = MongoClient('mongodb://127.0.0.1:27017/python')
-db=client.python
+client = MongoClient('mongodb://127.0.0.1:27017/medescavator')
+estabelecimento = '60cfe9513cb7930bebb6c0f4'
+
+db=client.medescavator
 # names = ['Kitchen','Animal','State', 'Tastey', 'Big','City','Fish', 'Pizza','Goat', 'Salty','Sandwich','Lazy', 'Fun']
 # company_type = ['LLC','Inc','Company','Corporation']
 # company_cuisine = ['Pizza', 'Bar Food', 'Fast Food', 'Italian', 'Mexican', 'American', 'Sushi Bar', 'Vegetarian']
@@ -97,10 +99,21 @@ for i in sopa.find_all('div', {'class': 'commerce_columns_item_inner'}):
   obj['preco'] = float(re.findall("\d+\.\d+", a_string)[0])
   for f in esptecnica:
     split = f.text.split(':')
-    nome = split[0].replace('\r', '').replace('\n', '')
-    value = split[1].replace('\r', '').replace('\n', '')
+    nome = split[0].replace('\r', '').replace('\n', '').lower()
+    value = split[1].replace('\r', '').replace('\n', '').lower()
     obj[nome] = value
-  db.produtos.insert_one(obj)
+  finalObj = {
+    'nome':obj['nome'],
+    'fabricante':obj['marca'],
+    'modelo':obj['modelo'],
+    'preco':obj['preco'],
+    'status':True,
+    'estabelecimento':ObjectId(estabelecimento),
+    'rank': 1,
+    'descricao':tecnica.text,
+    'categorias':ObjectId(['60c8d06c8089d00569cde3d7'])
+  }
+  db.produtoCollection.insert_one(finalObj)
   if p == n_produt:
     print("Extração concluída.")
     break
